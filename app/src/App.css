@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'TTHakgyoansimUndongjangL';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimUndongjangL.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+.App {
+  font-family: 'TTHakgyoansimUndongjangL';
+  text-align: center;
+  max-width: 425px;
+  height: 100vh;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
