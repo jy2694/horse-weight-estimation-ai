@@ -15,6 +15,8 @@ This project uses computer vision to analyze pictures of the horse's side and es
 ---
 ### 구성; Configuration
 
+![](https://github.com/jy2694/horse-weight-estimation-ai/blob/main/sequence.png?raw=true)
+![](https://github.com/jy2694/horse-weight-estimation-ai/blob/main/configuration.png?raw=true)
 
 ---
 ### 개발자; Developer
