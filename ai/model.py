@@ -18,6 +18,6 @@ class DetectionModel:
     def predict(self, file_dir=None):
         time.sleep(0.5)
 
-        pred = run(model=self.model, source=file_dir, data=r'D:\yolov5\data\cdata.yaml')
+        pred = run(model=self.model, source=file_dir, data=r"./Detection/\horse.yaml", imgsz=(224, 224))
 
         return pred
