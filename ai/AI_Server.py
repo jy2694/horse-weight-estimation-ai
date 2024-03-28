@@ -12,18 +12,24 @@ class Main(DetectionModel):
 
 
 class Server(Main):
+    # TODO: DB connect
     def __init__(self):
-        super().__init__(detection_weight=r"D:\yolov5\runs\train\yolov5_test7\weights\best.pt")
+        super().__init__(detection_weight=r"./Detection/weight/best.pt")
 
         start_server = websockets.serve(self.ai_status, 'localhost', 8000)
 
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
 
-    async def ai_status(self, websocket, i):
-        await websocket.recv()
-        detect_status = self.predict(r"D:\yolov5\person\valid\images\20221105_ch8_1017.png")
-        if detect_status == 0:
+    async def ai_status(self, websocket):
+        file_id = await websocket.recv()
+        # print(file_id)
+
+        file_path = 0
+
+        detect_status = self.predict(r"./Detection/Detection_sample.jpeg")
+        if detect_status == 1:
+            # TODO: Depth & Shape Estimation
             await websocket.send("0")
         else:
             await websocket.send("1")
@@ -33,4 +39,3 @@ class Server(Main):
 
 if __name__ == '__main__':
     s = Server()
-    print(sys.path)
