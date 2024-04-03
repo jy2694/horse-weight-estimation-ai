@@ -4,9 +4,10 @@ import sys
 from model import DetectionModel
 import websockets
 import asyncio
+from Load_DB import LoadDB
 
 
-class Main(DetectionModel):
+class Main(DetectionModel, LoadDB):
     def __init__(self, detection_weight):
         super().__init__(weights_file=detection_weight)
 
@@ -23,9 +24,7 @@ class Server(Main):
 
     async def ai_status(self, websocket):
         file_id = await websocket.recv()
-        # print(file_id)
-
-        file_path = 0
+        file_path = self.get_filepath(file_id)
 
         detect_status = self.predict(r"./Detection/Detection_sample.jpeg")
         if detect_status == 1:
