@@ -54,7 +54,7 @@ from utils.torch_utils import select_device, smart_inference_mode
 
 
 @smart_inference_mode()
-def run(
+def run(  # 이름 변경
         model,  # model path or triton URL
         source=ROOT / 'data/images',  # file/dir/URL/glob/screen/0(webcam)
         data=ROOT / 'data/coco128.yaml',  # dataset.yaml path
@@ -163,6 +163,9 @@ def run(
 
                     cv2.imwrite(f'./log/detected_img/{current_time.year}{current_time.month:0>2d}{current_time.day:0>2d}'
                                 f'-{current_time.hour:0>2d}{current_time.minute:0>2d}{current_time.second:0>2d}.png', im0)
+
+                    return c
+
                 # 수정
 
 

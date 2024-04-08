@@ -15,9 +15,9 @@ class DetectionModel:
         self.device_txt = 'cuda:0' if torch.cuda.is_available() else 'cpu'
         self.model = DetectMultiBackend(weights=weights_file, device=torch.device(self.device_txt), dnn=False, fp16=False)
 
-    def predict(self, file_dir=None):
+    def predict(self, file_dir=None):  # 이름 변경
         time.sleep(0.5)
 
-        pred = run(model=self.model, source=file_dir, data=r"./Detection/\horse.yaml", imgsz=(224, 224))
+        pred = run(model=self.model, source=file_dir, data=r"./Detection\horse.yaml", imgsz=(224, 224))
 
         return pred
