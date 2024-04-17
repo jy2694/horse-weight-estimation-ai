@@ -5,36 +5,30 @@ from model import DetectionModel
 import websockets
 import asyncio
 from Load_DB import LoadDB
+from task_manager import TaskManager
 
 
-class Main(DetectionModel, LoadDB):
-    def __init__(self, detection_weight):
-        super().__init__(weights_file=detection_weight)
-
-
-class Server(Main):
+class Server(TaskManager):
     # TODO: DB connect
-    def __init__(self):
+    def __init__(self, host='localhost', port=8000):
         super().__init__(detection_weight=r"./Detection/weight/best.pt")
+        self.task = None
+        self.host = host
+        self.port = port
 
-        start_server = websockets.serve(self.ai_status, 'localhost', 8000)
+    async def start_server(self):
+        async with websockets.serve(self.temp, self.host, self.port):
+            print('Server Started')
+            await asyncio.Future()
 
-        asyncio.get_event_loop().run_until_complete(start_server)
-        asyncio.get_event_loop().run_forever()
-
-    async def ai_status(self, websocket):
-        file_id = await websocket.recv()
-        file_path = self.get_filepath(file_id)
-
-        detect_status = self.predict(r"./Detection/Detection_sample.jpeg")
-        if detect_status == 1:
-            # TODO: Depth & Shape Estimation
-            await websocket.send("0")
-        else:
-            await websocket.send("1")
-
-        print('received websocket')
+    async def temp(self, websocket):  # 이름 변경
+        try:
+            async for message in websocket:
+                await self.handle_websocket_receive(websocket, message)
+        except websockets.exceptions.ConnectionClosedError:
+            print('Connection Error')
 
 
 if __name__ == '__main__':
-    s = Server()
+    server = Server()
+    asyncio.run(server.start_server())
