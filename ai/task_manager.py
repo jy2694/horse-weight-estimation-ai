@@ -3,7 +3,7 @@ import asyncio
 from model_handler import ModelHandler
 
 
-class TaskManager(ModelHandler, LoadDB):
+class TaskManager(ModelHandler):
     def __init__(self, detection_weight):
         super().__init__(detection_weight=detection_weight)
         self.task = None
@@ -16,7 +16,7 @@ class TaskManager(ModelHandler, LoadDB):
 
     async def _start_task(self, websocket, message):  # 이름 변경
         if self.task is None or self.task.done():
-            self.task = asyncio.create_task(self.pred(websocket, message))
+            self.task = asyncio.create_task(self._pred(websocket, message))
             await websocket.send("Task started")
         else:
             await websocket.send("Task is already running")
@@ -29,13 +29,12 @@ class TaskManager(ModelHandler, LoadDB):
         else:
             await websocket.send('No task to stop')
 
-    async def pred(self, websocket, message):  # 이름 변경
+    async def _pred(self, websocket, message):  # 이름 변경
         print('pred start')
         file_id = message
-        # file_path = self.get_filepath(message)
+        file_path = LoadDB.get_filepath(id=472)
 
-        detect_status = self.predict(r"./Detection/Detection_sample.jpeg")  # test
-        # detect_status = self.predict(file_path)
+        detect_status = self.predict(file_path)  # test
 
         if detect_status == 1:
             # TODO: Depth & Shape Estimation

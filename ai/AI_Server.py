@@ -11,7 +11,7 @@ from task_manager import TaskManager
 class Server(TaskManager):
     # TODO: DB connect
     def __init__(self, host='localhost', port=8000):
-        super().__init__(detection_weight=r"./Detection/weight/best.pt")
+        super(Server, self).__init__(detection_weight=r"./Detection/weight/best.pt")
         self.task = None
         self.host = host
         self.port = port

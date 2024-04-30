@@ -9,7 +9,6 @@ async def hello():
         await websocket.send("start")
         a = await websocket.recv()
         print(a)
-        #
         # time.sleep(1)
         # await websocket.send("stop")
         b = await websocket.recv()
