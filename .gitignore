@@ -6,3 +6,4 @@
 
 server/build
 server/.gradle
+server/attached

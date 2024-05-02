@@ -1,37 +1,75 @@
 package kr.ac.wku.estimation.socket;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.ac.wku.estimation.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class ClientSocketHandler extends TextWebSocketHandler {
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session){
 
-    }
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message){
-        String payload = message.getPayload();
-        System.out.println(payload);
-    }
+    private static final Map<UUID, WebSocketSession> clientSessionMap = new HashMap<>();
+    private static final Map<WebSocketSession, UUID> clientUUIDMap = new HashMap<>();
+    private static WebSocketSession aiSession;
 
-    private void broadcastMessage(Set<WebSocketSession> sessions, TextMessage message){
-        sessions.parallelStream().forEach(session -> {
-            try {
-                session.sendMessage(message);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+    private final FileService fileService;
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        String[] payload = message.getPayload().split(":");
+        switch(payload[0]){
+            case "client", "CLIENT" -> {
+                switch(payload[1]){
+                    case "connect", "CONNECT" -> {
+                        clientSessionMap.put(UUID.fromString(payload[2]), session);
+                        clientUUIDMap.put(session, UUID.fromString(payload[2]));
+                        session.sendMessage(new TextMessage("connected:"+new ObjectMapper().writeValueAsString(fileService.findByOwner(UUID.fromString(payload[2])))));
+                    }
+                }
             }
-        });
+            case "ai", "AI" -> {
+                switch(payload[1]){
+                    case "connect", "CONNECT" -> {
+                        aiSession = session;
+                        session.sendMessage(new TextMessage("connected"));
+                    }
+                    case "comp", "COMP" -> {
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        UUID uuid = clientUUIDMap.get(session);
+        clientSessionMap.remove(uuid);
+        clientUUIDMap.remove(session);
+    }
+
+    public static void sendMessageToAI(String message) throws IOException {
+        if(aiSession == null) return;
+        aiSession.sendMessage(new TextMessage(message));
+    }
+
+    public static void sendMessage(UUID uuid, String message) throws IOException {
+        WebSocketSession session = clientSessionMap.get(uuid);
+        if(session != null) return;
+        session.sendMessage(new TextMessage(message));
     }
 
 }

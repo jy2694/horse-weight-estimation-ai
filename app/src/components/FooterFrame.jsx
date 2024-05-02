@@ -42,7 +42,7 @@ export default function FooterFrame(props){
                 onClick={()=>setSelection(i)}>
                 <div className="m-2 d-flex flex-column justify-content-center align-items-center" style={{height: "7vh", width: "7vh"}}>
                     <img alt="" src={menuElement.icon} style={{height: "3vh", width: "3vh"}}/>
-                    <span>{menuElement.title}</span>
+                    <span style={{fontSize:"small"}}>{menuElement.title}</span>
                 </div>
             </div>);
         }
