@@ -5,7 +5,6 @@ import sys
 class LoadDB:
     try:
         conn = mariadb.connect(host='localhost', user='root', password='1234', port=3306, database='cephalometricai')
-        print('Connection successful')
     except mariadb.Error as e:
         print(f'Error connecting to MariaDB Platform: {e}')
         sys.exit(1)
