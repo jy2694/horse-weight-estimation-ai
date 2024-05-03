@@ -3,23 +3,19 @@ import sys
 
 
 class LoadDB:
-    def __init__(self):
-        try:
-            self.conn = mariadb.connect(host='localhost', user='root', password='000000', port=3306, database='test')
-        except mariadb.Error as e:
-            print(f'Error connecting to MariaDB Platform: {e}')
-            sys.exit(1)
+    try:
+        conn = mariadb.connect(host='localhost', user='root', password='1234', port=3306, database='cephalometricai')
+    except mariadb.Error as e:
+        print(f'Error connecting to MariaDB Platform: {e}')
+        sys.exit(1)
 
-        self.cur = self.conn.cursor()
+    cur = conn.cursor()
 
-        self.select_query = "SELECT file_path from test_db WHERE id=?"
+    select_query = "SELECT system_path from image WHERE id=?"
 
-    def get_filepath(self, id):
-        self.cur.execute(self.select_query, (id,))
-        result_set = self.cur.fetchall()
+    @classmethod
+    def get_filepath(cls, id):
+        cls.cur.execute(cls.select_query, (id,))
+        result_set = cls.cur.fetchall()
 
         return result_set[0][0]
-
-
-# test = LoadDB()
-# print(test.get_filepath('e7af1426- 511d-11e8-a090-0201965f932a'))

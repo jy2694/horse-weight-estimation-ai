@@ -1,12 +1,23 @@
+import random
+
 from Load_DB import LoadDB
 import asyncio
 from model_handler import ModelHandler
+import json
+import random
 
 
-class TaskManager(ModelHandler, LoadDB):
+class TaskManager(ModelHandler):
     def __init__(self, detection_weight):
         super().__init__(detection_weight=detection_weight)
         self.task = None
+        self.result_form = {
+                              "fileName": "파일이름",
+                              "tall": "0",
+                              "weight": "0",
+                              "reason": "blahblah"
+                            }
+
 
     async def handle_websocket_receive(self, websocket, message):  # 이름 변경
         if message == 'stop':  # STOP CODE
@@ -16,7 +27,7 @@ class TaskManager(ModelHandler, LoadDB):
 
     async def _start_task(self, websocket, message):  # 이름 변경
         if self.task is None or self.task.done():
-            self.task = asyncio.create_task(self.pred(websocket, message))
+            self.task = asyncio.create_task(self._pred(websocket, message))
             await websocket.send("Task started")
         else:
             await websocket.send("Task is already running")
@@ -29,17 +40,26 @@ class TaskManager(ModelHandler, LoadDB):
         else:
             await websocket.send('No task to stop')
 
-    async def pred(self, websocket, message):  # 이름 변경
-        print('pred start')
+    async def _pred(self, websocket, message):  # 이름 변경
+        print('pred started')
         file_id = message
-        # file_path = self.get_filepath(message)
 
-        detect_status = self.predict(r"./Detection/Detection_sample.jpeg")  # test
-        # detect_status = self.predict(file_path)
+        # Local test
+        test_path = LoadDB.get_filepath(id=472)
+
+        file_path = message[10:]
+        print(file_path)
+
+        detect_status = self.predict(test_path)  # test
 
         if detect_status == 1:
             # TODO: Depth & Shape Estimation
             await websocket.send('side')
+            self.result_form["fileName"] = file_path
+            self.result_form["tall"] = str(random.randrange(200, 250))
+            self.result_form['weight'] = str(random.randrange(500, 600))
+            self.result_form['reason'] = 'asdfasdf'
+            return json.dumps(self.result_form)
         else:
             await websocket.send("etc")
 
