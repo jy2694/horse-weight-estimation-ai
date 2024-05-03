@@ -1,6 +1,8 @@
 package kr.ac.wku.estimation.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.ac.wku.estimation.dto.CompleteDTO;
+import kr.ac.wku.estimation.entity.HFile;
 import kr.ac.wku.estimation.service.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +13,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,7 +46,15 @@ public class ClientSocketHandler extends TextWebSocketHandler {
                         session.sendMessage(new TextMessage("connected"));
                     }
                     case "comp", "COMP" -> {
-                        
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        CompleteDTO dto = objectMapper.readValue(payload[2], CompleteDTO.class);
+                        Optional<HFile> optionalFile = fileService.findByName(dto.getFileName());
+                        optionalFile.ifPresent(file -> {
+                            file.setTall(dto.getTall());
+                            file.setWeight(dto.getWeight());
+                            file.setFlag(true);
+                            file.setReason(dto.getReason());
+                        });
                     }
                 }
             }

@@ -17,8 +17,9 @@ public class HFile {
     private String owner;
     @Column(nullable = false)
     private String fileName;
+    @Column(nullable = false)
+    private Boolean flag;
     private Double tall;
     private Double weight;
     private String reason;
-
 }

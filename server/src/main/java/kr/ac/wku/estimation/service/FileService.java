@@ -41,6 +41,7 @@ public class FileService {
         fileRepository.save(HFile.builder()
                 .fileName(name)
                 .owner(owner.toString())
+                .flag(false)
                 .build());
     }
 

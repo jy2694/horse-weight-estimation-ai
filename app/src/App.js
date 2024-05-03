@@ -2,15 +2,24 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavigationBar from "./components/NavigationBar";
 import FooterFrame from "./components/FooterFrame";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import Body from "./components/Body";
 import { HWebSock } from './HWebSock';
 
+import camera from './img/camera.png';
+import recordImg from './img/record.png';
+import settings from './img/settings.png';
+import RecordList from "./components/pages/RecordList";
+import Setting from "./components/pages/Setting";
+import Camera from "./components/pages/Camera";
+import {loadAll, processCompletePhoto} from "./PhotoDatabase";
+
 function App() {
-  
-  const [selection, setSelection] = useState(0);
+  const [, updateState] = useState();
+  const forceUpdate = useCallback(()=>updateState({}),[]);
+  const [selection, setSelection] = useState(1);
   const [connected, setConnected] = useState(false);
-  const [record, setRecord] = useState([]);
+  const [menu, setMenu] = useState([]);
   const webSock = useRef(null);
   
   useEffect(()=> {
@@ -33,14 +42,39 @@ function App() {
           setConnected(true);
           const listJson = JSON.parse(data.data.split("connected:")[1]);
           listJson.forEach((e) => {
-            e['flag'] = 'uploaded';
+            if(e['flag'] === true){
+              e['flag'] = 'complete';
+            } else {
+              e['flag'] = 'uploaded';
+            }
           });
-          setRecord(listJson);
+          loadAll(listJson);
           console.log(listJson);
+          setMenu([
+                    {
+                      title: "설정",
+                      icon: settings,
+                      page: <Setting/>
+                    },
+                    {
+                      title: "기록",
+                      icon: recordImg,
+                      page: <RecordList />
+                    },
+                    {
+                      title: "카메라",
+                      icon: camera,
+                      page: <Camera setSelection={(index)=>setSelection(index)}/>
+                    }
+                  ]);
+        } else if(data.data.startsWith("comp:")){
+          const listJson = JSON.parse(data.data.split("comp:")[1]);
+          processCompletePhoto(listJson["fileName"], listJson["tall"], listJson["weight"], listJson["reason"]);
+          forceUpdate();
         }
       });
   }, []);
-  
+
   return (
     <div className="App">
       {
@@ -50,8 +84,8 @@ function App() {
         </div>
       }
       <NavigationBar/>
-      <Body selection={selection}/>
-      <FooterFrame onPageChange={(value) => setSelection(value)}/>
+      <Body selection={selection} menu={menu}/>
+      <FooterFrame menu={menu} selection={selection} setSelection={(i)=>setSelection(i)}/>
     </div>
   );
 }

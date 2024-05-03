@@ -2,8 +2,9 @@ import {Container} from "react-bootstrap";
 import camImage from '../../img/camera.png';
 import {useRef} from "react";
 import axios from "axios";
+import {uploadCompletePhoto, uploadPhoto} from "../../PhotoDatabase";
 
-export default function Camera(){
+export default function Camera(props){
 
     const inputElement = useRef(null);
 
@@ -14,9 +15,12 @@ export default function Camera(){
             formData.append("file", e.target.files[0]);
             formData.append("name", crypto.randomUUID().toString());
             formData.append("owner", localStorage.getItem("id"));
+            uploadPhoto(formData.get("name"));
             axios.post('http://localhost:8080/upload', formData)
                 .then(function (response) {
                     console.log(response);
+                    uploadCompletePhoto(formData.get("name"));
+                    props.setSelection(1);
                 })
                 .catch(function (error) {
                     console.log(error);
