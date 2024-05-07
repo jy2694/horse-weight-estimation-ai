@@ -1,5 +1,3 @@
-import random
-
 from Load_DB import LoadDB
 import asyncio
 from model_handler import ModelHandler
@@ -28,7 +26,6 @@ class TaskManager(ModelHandler):
     async def _start_task(self, websocket, message):  # 이름 변경
         if self.task is None or self.task.done():
             self.task = asyncio.create_task(self._pred(websocket, message))
-            await websocket.send("Task started")
         else:
             await websocket.send("Task is already running")
 
@@ -45,21 +42,21 @@ class TaskManager(ModelHandler):
         file_id = message
 
         # Local test
-        test_path = LoadDB.get_filepath(id=472)
+        # test_path = LoadDB.get_filepath(id=472)
 
         file_path = message[10:]
-        print(file_path)
 
-        detect_status = self.predict(test_path)  # test
+        # detect_status = self.predict(test_path)  # test
+        detect_status = 1
 
         if detect_status == 1:
             # TODO: Depth & Shape Estimation
-            await websocket.send('side')
+            # await websocket.send('side')
             self.result_form["fileName"] = file_path
             self.result_form["tall"] = str(random.randrange(200, 250))
             self.result_form['weight'] = str(random.randrange(500, 600))
             self.result_form['reason'] = 'asdfasdf'
-            return json.dumps(self.result_form)
+            await websocket.send(json.dumps(self.result_form))
         else:
             await websocket.send("etc")
 
