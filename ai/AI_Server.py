@@ -1,3 +1,5 @@
+import sys
+
 import websockets
 import asyncio
 from task_manager import TaskManager
@@ -12,27 +14,20 @@ class Client(TaskManager):
         self.port = port
 
     async def start_server(self):
-        async with websockets.serve(self.temp, self.host, self.port):
-            print('Server Started')
-            async with websockets.connect(f'ws://{self.host}:{self.port}', ping_interval=None) as websocket:
-                await websocket.send("connect")
+        async with websockets.connect(f'ws://{self.host}:{self.port}', ping_interval=None) as websocket:
+            try:
+                await websocket.send('connect')
                 response = await websocket.recv()
-            await asyncio.Future()
-
-    async def temp(self, websocket):  # 이름 변경
-        try:
-            await websocket.send('connect')
-            response = await websocket.recv()
-            if response == 'connected':
-                print("connected successfully")
-            else:
-                print("fail to connect")
-                await websocket.close()
-
-            async for message in websocket:
-                await self.handle_websocket_receive(websocket, message)
-        except websockets.exceptions.ConnectionClosedError:
-            print('Connection Error')
+                if response == 'connected':
+                    print("connected successfully")
+                else:
+                    print("fail to connect")
+                    await websocket.close()
+                async for message in websocket:
+                    await self.handle_websocket_receive(websocket, message)
+            except websockets.exceptions.ConnectionClosedError:
+                print('Connection Error')
+        await asyncio.Future()
 
 
 if __name__ == '__main__':
