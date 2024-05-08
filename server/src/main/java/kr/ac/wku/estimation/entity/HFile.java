@@ -22,4 +22,6 @@ public class HFile {
     private Double tall;
     private Double weight;
     private String reason;
+    private String extension;
+    private Long size;
 }

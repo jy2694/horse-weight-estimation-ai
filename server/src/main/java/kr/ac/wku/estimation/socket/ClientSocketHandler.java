@@ -47,14 +47,25 @@ public class ClientSocketHandler extends TextWebSocketHandler {
                     }
                     case "comp", "COMP" -> {
                         ObjectMapper objectMapper = new ObjectMapper();
-                        CompleteDTO dto = objectMapper.readValue(payload[2], CompleteDTO.class);
+                        StringBuilder json = new StringBuilder();
+                        json.append(payload[2]);
+                        for(int i = 3; i < payload.length; i ++)
+                            json.append(":"+payload[i]);
+                        CompleteDTO dto = objectMapper.readValue(json.toString(), CompleteDTO.class);
                         Optional<HFile> optionalFile = fileService.findByName(dto.getFileName());
                         optionalFile.ifPresent(file -> {
                             file.setTall(dto.getTall());
                             file.setWeight(dto.getWeight());
                             file.setFlag(true);
                             file.setReason(dto.getReason());
+                            fileService.save(file);
+                            try {
+                                sendMessage(UUID.fromString(file.getOwner()), "comp:"+json);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         });
+
                     }
                 }
             }
@@ -75,7 +86,7 @@ public class ClientSocketHandler extends TextWebSocketHandler {
 
     public static void sendMessage(UUID uuid, String message) throws IOException {
         WebSocketSession session = clientSessionMap.get(uuid);
-        if(session != null) return;
+        if(session == null) return;
         session.sendMessage(new TextMessage(message));
     }
 

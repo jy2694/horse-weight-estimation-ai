@@ -6,8 +6,10 @@ export default function RecordList(){
 
     const renderList = () => {
         const result = [];
+        let idx = 0;
         getRecordList().forEach((value) => {
-            result.push(<ListElement element={value}/>);
+            result.push(<ListElement key={idx} element={value}/>);
+            idx++;
         });
         return result;
     }

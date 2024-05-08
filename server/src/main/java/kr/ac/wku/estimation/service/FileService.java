@@ -4,11 +4,14 @@ import kr.ac.wku.estimation.entity.HFile;
 import kr.ac.wku.estimation.properties.StorageProperties;
 import kr.ac.wku.estimation.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +45,24 @@ public class FileService {
                 .fileName(name)
                 .owner(owner.toString())
                 .flag(false)
+                .extension(fileExtension)
+                .size(file.getSize())
                 .build());
+    }
+
+    public Resource readFileAsResource(final HFile file) {
+        Path destinationFile = Paths.get(storageProperties.getPath()).resolve(
+                        Paths.get(file.getFileName()+file.getExtension()))
+                .normalize().toAbsolutePath();
+        try {
+            Resource resource = new UrlResource(destinationFile.toUri());
+            if (resource.exists() == false || resource.isFile() == false) {
+                throw new RuntimeException("file not found : " + destinationFile.toString());
+            }
+            return resource;
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("file not found : " + destinationFile.toString());
+        }
     }
 
     public Optional<HFile> findByName(String name){
@@ -51,5 +71,9 @@ public class FileService {
 
     public List<HFile> findByOwner(UUID owner){
         return fileRepository.findAllByOwner(owner.toString());
+    }
+
+    public void save(HFile file){
+        fileRepository.save(file);
     }
 }

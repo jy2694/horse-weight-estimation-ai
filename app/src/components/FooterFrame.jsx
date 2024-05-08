@@ -7,7 +7,7 @@ export default function FooterFrame(props){
         const result = [];
         for(let i = 0; i < props.menu.length; i ++){
             const menuElement = props.menu[i];
-            result.push(<div className={"rounded-circle menu-icon " + (props.selection === i ? "bg-primary-subtle" : "")}
+            result.push(<div key={i} className={"rounded-circle menu-icon " + (props.selection === i ? "bg-primary-subtle" : "")}
                 style={{minHeight: "8vh", minWidth: "8vh"}}
                 onClick={()=>props.setSelection(i)}>
                 <div className="m-2 d-flex flex-column justify-content-center align-items-center" style={{height: "7vh", width: "7vh"}}>

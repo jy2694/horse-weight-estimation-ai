@@ -19,11 +19,14 @@ export function uploadCompletePhoto(fileName){
 }
 export function processCompletePhoto(fileName, tall, weight, reason){
     for(let i = 0; i < recordList.length; i ++){
-            if(recordList[i].fileName === fileName){
-                recordList[i].flag = "complete";
-                return;
-            }
-        }   
+        if(recordList[i].fileName === fileName){
+            recordList[i].flag = "complete";
+            recordList[i].tall = tall;
+            recordList[i].weight = weight;
+            recordList[i].reason = reason;
+            return;
+        }
+    }
 }
 export function loadAll(list){
     recordList.length = 0;

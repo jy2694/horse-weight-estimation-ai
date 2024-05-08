@@ -9,7 +9,6 @@ export class HWebSock {
 
     constructor(url, onopen, onclose, onerror, onmessage) {
         this.url = url;
-        console.log(this.url);
         this.onopen = onopen;
         this.onclose = onclose;
         this.onerror = onerror;
@@ -18,7 +17,6 @@ export class HWebSock {
     }
 
     connect(){
-        console.log(this.url);
         this.webSocket = new WebSocket(this.url);
         this.webSocket.onopen =  this.onopen;
         this.webSocket.onclose = this.onclose;
