@@ -152,6 +152,7 @@ def run(  # 이름 변경
                     # 여기서 아웃풋 데이터 추가
                         # print("person!")
 
+                    xywh = []
                     for *xyxy, conf, cls in reversed(det):
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
 
@@ -159,12 +160,16 @@ def run(  # 이름 변경
                     label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
                     annotator.box_label(xyxy, label, color=colors(c, True))
                     im0 = annotator.result()
+
+
                         # 수정
 
                     cv2.imwrite(f'./log/detected_img/{current_time.year}{current_time.month:0>2d}{current_time.day:0>2d}'
                                 f'-{current_time.hour:0>2d}{current_time.minute:0>2d}{current_time.second:0>2d}.png', im0)
 
-                    return c
+                    #TODO: 바운딩박스 그린 사진 리턴
+                    #TODO: 바운딩박스에 키랑 몸무게 값 넣기
+                    return [c, xywh]
 
                 # 수정
 
