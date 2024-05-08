@@ -14,9 +14,9 @@ class Client(TaskManager):
         self.port = port
 
     async def start_server(self):
-        async with websockets.connect(f'ws://{self.host}:{self.port}', ping_interval=None) as websocket:
+        async with websockets.connect(f'ws://{self.host}:{self.port}/ws', ping_interval=None) as websocket:
             try:
-                await websocket.send('connect')
+                await websocket.send('ai:connect')
                 response = await websocket.recv()
                 if response == 'connected':
                     print("connected successfully")
