@@ -76,4 +76,8 @@ public class FileService {
     public void save(HFile file){
         fileRepository.save(file);
     }
+
+    public void delete(HFile file){
+        fileRepository.delete(file);
+    }
 }

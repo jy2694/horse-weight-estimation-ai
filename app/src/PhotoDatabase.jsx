@@ -28,6 +28,16 @@ export function processCompletePhoto(fileName, tall, weight, reason){
         }
     }
 }
+
+export function deletePhoto(fileName){
+    for(let i = 0; i < recordList.length; i ++){
+        if(recordList[i].fileName === fileName){
+            recordList.splice(i, 1);
+        }
+    }
+    console.log(recordList);
+}
+
 export function loadAll(list){
     recordList.length = 0;
     for(let i = 0; i < list.length; i ++){

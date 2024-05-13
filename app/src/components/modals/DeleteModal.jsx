@@ -1,12 +1,13 @@
 import {Button, Modal} from "react-bootstrap";
+import {deletePhoto} from "../../PhotoDatabase";
 
 export default function DeleteModal(props){
     return <Modal
             aria-labelledby="contained-modal-title-vcenter"
             centered
-            show={props.show}
+            show={props.show != null}
         >
-            <Modal.Header closeButton>
+            <Modal.Header>
                 <Modal.Title id="contained-modal-title-vcenter">
                     주의
                 </Modal.Title>
@@ -20,8 +21,10 @@ export default function DeleteModal(props){
                 </p>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="danger">삭제</Button>
-                <Button variant="secondary" onClick={()=>props.setShow(false)}>취소</Button>
+                <Button variant="danger" onClick={()=> {
+                            props.webSock.current.send("client:del:"+props.show);
+                        }}>삭제</Button>
+                <Button variant="secondary" onClick={()=>props.setShow(null)}>취소</Button>
             </Modal.Footer>
         </Modal>;
 }

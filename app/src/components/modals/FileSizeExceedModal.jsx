@@ -5,6 +5,7 @@ export default function FileSizeExceedModal(props){
             aria-labelledby="contained-modal-title-vcenter"
             centered
             show={props.show}
+            onHide={()=>props.setShow(false)}
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">

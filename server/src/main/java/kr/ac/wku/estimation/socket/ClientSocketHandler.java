@@ -37,6 +37,24 @@ public class ClientSocketHandler extends TextWebSocketHandler {
                         clientUUIDMap.put(session, UUID.fromString(payload[2]));
                         session.sendMessage(new TextMessage("connected:"+new ObjectMapper().writeValueAsString(fileService.findByOwner(UUID.fromString(payload[2])))));
                     }
+                    case "del", "DEL" -> {
+                        Optional<HFile> fileOptional = fileService.findByName(payload[2]);
+                        fileOptional.ifPresent(hfile -> {
+                            fileService.delete(hfile);
+                            try {
+                                session.sendMessage(new TextMessage("del:"+payload[2]));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if(!hfile.getFlag()){
+                                try {
+                                    sendMessageToAI("del:"+payload[2]);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
+                    }
                 }
             }
             case "ai", "AI" -> {

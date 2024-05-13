@@ -42,7 +42,7 @@ export default function Camera(props){
                 });
         }}/>
         <Container className="rounded-circle bg-primary-subtle d-flex justify-content-center align-items-center flex-column"
-            style={{minHeight: "50vh", minWidth: "50vh"}}
+            style={{minHeight: "40vh", minWidth: "40vh"}}
             onClick={() => {
                 inputElement.current.click();
             }}>

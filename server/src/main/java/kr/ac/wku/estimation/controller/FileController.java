@@ -35,7 +35,6 @@ public class FileController {
 
     @GetMapping("image/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable final String fileId) {
-        System.out.println(fileId);
         Optional<HFile> file = fileService.findByName(fileId);
         if(file.isEmpty()) return ResponseEntity.notFound().build();
         HFile hFile = file.get();

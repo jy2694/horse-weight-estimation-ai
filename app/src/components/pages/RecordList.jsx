@@ -2,13 +2,13 @@ import {Container} from "react-bootstrap";
 import ListElement from "./ListElement";
 import {getRecordList} from "../../PhotoDatabase";
 
-export default function RecordList(){
+export default function RecordList(props){
 
     const renderList = () => {
         const result = [];
         let idx = 0;
         getRecordList().forEach((value) => {
-            result.push(<ListElement key={idx} element={value}/>);
+            result.push(<ListElement key={idx} element={value} onDelete={()=>props.onDelete(value.fileName)} onClick={()=>props.setSelectElement(value)}/>);
             idx++;
         });
         return result;
