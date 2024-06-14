@@ -32,9 +32,3 @@ This project uses computer vision to analyze pictures of the horse's side and es
 
 ##### 4. 김제연
 ##### | 원광대학교 컴퓨터소프트웨어공학과
-
-##### 5. 방현우
-##### | 원광대학교 컴퓨터소프트웨어공학과
-
-##### 6. 배준형
-##### | 원광대학교 컴퓨터소프트웨어공학과
